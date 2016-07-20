@@ -7,7 +7,7 @@
 CatalogFile=sbvmidi.cat
 Signature="$Windows NT$"
 Class=MEDIA
-Provider=%AldoIlsant%
+Provider=%Springbeats%
 ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
 DriverVer = 02/11/2014,1.1.2.25
 
@@ -221,8 +221,8 @@ HKR,,CLSID,,%Proxy.CLSID%
 HKR,,FriendlyName,,%SBVMIDI.VIII.MIDI.szPname%
 
 [Strings]
-AldoIlsant="AldoIlsant.com"
-MfgName="AldoIlsant.com"
+Springbeats="springbeats.com"
+MfgName="springbeats.com"
 Proxy.CLSID="{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
 KSNAME_Midi1="AutoTheory1"
 KSNAME_Midi2="AutoTheory2"
