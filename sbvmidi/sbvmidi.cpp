@@ -24,14 +24,14 @@
 
 static PWSTR PortReferenceNames[NUM_CHANNEL_REFERENCE_NAMES] =
 {
-    L"AutoTheory1",
-    L"AutoTheory2",
-    L"AutoTheory3",
-    L"AutoTheory4",
-    L"AutoTheory5",
-    L"AutoTheory6",
-    L"AutoTheory7",
-    L"AutoTheory8" 
+    L"Springbeats vMIDI1",
+    L"Springbeats vMIDI2",
+    L"Springbeats vMIDI3",
+    L"Springbeats vMIDI4",
+    L"Springbeats vMIDI5",
+    L"Springbeats vMIDI6",
+    L"Springbeats vMIDI7",
+    L"Springbeats vMIDI8" 
 };
 
 /*****************************************************************************
