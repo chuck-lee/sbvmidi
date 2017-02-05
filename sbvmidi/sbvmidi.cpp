@@ -20,9 +20,10 @@
 
 #define kUseDMusicMiniport 1
 
-#define NUM_CHANNEL_REFERENCE_NAMES 100
+#define NUM_SUBDEVICES 300
 
-static const WCHAR PortReferenceName[] = L"Springbeats vMIDI1";
+static const WCHAR PortReferenceName[] = L"Springbeats vMIDI";
+static const ULONG MaxNameDigits = 3; //Max number of device names is  999 
 
 /*****************************************************************************
 * DriverEntry()
@@ -213,7 +214,7 @@ NTSTATUS InstallSubdeviceVirtual
     PPORT port = NULL;
     NTSTATUS status = STATUS_SUCCESS;
 
-	WCHAR deviceName[sizeof(PortReferenceName) + 5];
+	WCHAR deviceName[sizeof(PortReferenceName) + MaxNameDigits];
 	RtlSecureZeroMemory(deviceName, sizeof(deviceName));
 	if (swprintf_s(deviceName, sizeof(deviceName), L"%s%d", PortReferenceName, Index) < 0)
 	{
@@ -301,7 +302,7 @@ NTSTATUS StartDevice
 
     NTSTATUS ntStatus = STATUS_INSUFFICIENT_RESOURCES;
 
-    for (ULONG i = 0; i < NUM_CHANNEL_REFERENCE_NAMES; i++)
+    for (ULONG i = 0; i < NUM_SUBDEVICES; i++)
     {
 #if (kUseDMusicMiniport)
         ntStatus = InstallSubdeviceVirtual(
@@ -342,6 +343,6 @@ NTSTATUS AddDevice
 
     // Tell the class driver to add the device.
     //http://msdn.microsoft.com/en-us/library/windows/hardware/ff537683(v=vs.85).aspx
-    //NUM_CHANNEL_REFERENCE_NAMES gives the maximun number of subdevices. Adjust above. 
-    return PcAddAdapterDevice(DriverObject, PhysicalDeviceObject, StartDevice, NUM_CHANNEL_REFERENCE_NAMES, 0);
+    //NUM_SUBDEVICES gives the maximun number of subdevices. Adjust above. 
+    return PcAddAdapterDevice(DriverObject, PhysicalDeviceObject, StartDevice, NUM_SUBDEVICES, 0);
 }
