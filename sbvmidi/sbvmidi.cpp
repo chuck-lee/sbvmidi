@@ -20,19 +20,9 @@
 
 #define kUseDMusicMiniport 1
 
-#define NUM_CHANNEL_REFERENCE_NAMES 8
+#define NUM_CHANNEL_REFERENCE_NAMES 100
 
-static PWSTR PortReferenceNames[NUM_CHANNEL_REFERENCE_NAMES] =
-{
-    L"Springbeats vMIDI1",
-    L"Springbeats vMIDI2",
-    L"Springbeats vMIDI3",
-    L"Springbeats vMIDI4",
-    L"Springbeats vMIDI5",
-    L"Springbeats vMIDI6",
-    L"Springbeats vMIDI7",
-    L"Springbeats vMIDI8" 
-};
+static const WCHAR PortReferenceName[] = L"Springbeats vMIDI1";
 
 /*****************************************************************************
 * DriverEntry()
@@ -212,7 +202,7 @@ NTSTATUS InstallSubdeviceVirtual
 (
     _In_   PVOID           Context1,
     _In_   PVOID           Context2,
-    _In_   PWSTR           Name,
+    _In_   ULONG           Index,
     _In_   REFGUID         PortClassId, //DirectMusic or MIDI
     _In_   REFGUID         MiniportClassId, //DirectMusic or MIDI
     _In_   PRESOURCELIST   ResourceList
@@ -223,14 +213,16 @@ NTSTATUS InstallSubdeviceVirtual
     PPORT port = NULL;
     NTSTATUS status = STATUS_SUCCESS;
 
-    LOG(DEBUG, "InstallSubdevice");
-    LOG(DEBUG, "Creating port driver...");
+	WCHAR deviceName[sizeof(PortReferenceName) + 5];
+	RtlSecureZeroMemory(deviceName, sizeof(deviceName));
+	if (swprintf_s(deviceName, sizeof(deviceName), L"%s%d", PortReferenceName, Index) < 0)
+	{
+		LOG(ERROR, "Failed to generate device name");
+		return STATUS_UNSUCCESSFUL;
+	}
 
-    if (Name == NULL)
-    {
-        LOG(ERROR, "Invalid name handle (null value).");
-        return STATUS_INVALID_PARAMETER;
-    }
+    LOG(DEBUG, "InstallSubdevice %S", deviceName);
+    LOG(DEBUG, "Creating port driver...");
 
     status = PcNewPort(&port, PortClassId); //Create a directmusic or midi port driver
     if (NT_SUCCESS(status))
@@ -252,7 +244,7 @@ NTSTATUS InstallSubdeviceVirtual
                 LOG(DEBUG, "Miniport-init: success. Registering sub device...")
 
                     // Register the subdevice (port/miniport combination).
-                    status = PcRegisterSubdevice((PDEVICE_OBJECT)Context1, Name, port);
+                    status = PcRegisterSubdevice((PDEVICE_OBJECT)Context1, deviceName, port);
                 if (!(NT_SUCCESS(status)))
                 {
                     LOG(ERROR, "StartDevice: PcRegisterSubdevice failed");
@@ -315,7 +307,7 @@ NTSTATUS StartDevice
         ntStatus = InstallSubdeviceVirtual(
             pDeviceObject,
             pIrp,
-            PortReferenceNames[i],
+			i,
             CLSID_PortDMus,
             CLSID_MiniportDriverDMusUART,
             ResourceList);
@@ -323,7 +315,7 @@ NTSTATUS StartDevice
         ntStatus = InstallSubdeviceVirtual(
             pDeviceObject,
             pIrp,
-            PortReferenceNames[i],
+            i,
             IID_IPortMidi,
             CLSID_MiniportDriverUart,
             ResourceList);
